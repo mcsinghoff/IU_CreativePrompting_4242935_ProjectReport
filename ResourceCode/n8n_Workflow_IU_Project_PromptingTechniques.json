@@ -1,0 +1,511 @@
+{
+  "name": "IU_Project_PromptingTechniques",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c8ae05f5-37fc-44cd-9e87-62eca6a58386",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are supporting an Azure engineer and IT consultant in a university project about AI-assisted engineering workflows.\n\nUse the following JSON input as the project and task context:\n\n{{ JSON.stringify($json, null, 2) }}\n\nCreate a structured technical requirement specification for the described Microsoft Entra ID user onboarding script workflow.\n\nReturn the result in Markdown with the following sections:\n\n# Requirement Specification\n\n## 1. Scenario Summary\nBriefly describe the practical consulting scenario.\n\n## 2. Scope\nDescribe what the script and workflow should do.\n\n## 3. Out of Scope\nClearly state what must not be automated or executed.\n\n## 4. Functional Requirements\nList the required script capabilities.\n\n## 5. CSV Input Requirements\nList required and optional CSV columns and their meaning.\n\n## 6. Security Requirements\nList security, permission, and privacy requirements.\n\n## 7. Reliability Requirements\nInclude validation, error handling, logging, and dry-run requirements.\n\n## 8. Human Review Requirements\nExplain where and why human approval is required.\n\n## 9. Acceptance Criteria\nCreate a checklist that can be used to evaluate whether the generated solution is acceptable.\n\nDo not generate the PowerShell script yet. Only create the structured requirement specification."
+            }
+          ]
+        },
+        "simplify": false,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        464,
+        0
+      ],
+      "id": "79e0c3d7-79d9-4f6d-b2dc-9cd32798f2aa",
+      "name": "AI - Requirement Structuring",
+      "credentials": {
+        "openAiApi": {
+          "id": "1Rn4CZwScByDJVsl",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are supporting an Azure engineer and IT consultant in a university project about AI-assisted engineering workflows.\n\nThe project is about an n8n-based AI-assisted workflow that supports the creation, review, and documentation of PowerShell scripts for Microsoft Entra ID user onboarding from CSV files.\n\nUse the following requirement specification as the authoritative input:\n\n{{ $json.output[0].content[0].text }}\n\nGenerate a secure and realistic PowerShell script for the described scenario.\n\nThe script must be suitable as a draft for human review. It must not assume production readiness without testing.\n\nCreate a PowerShell script named:\n\nCreate-EntraUsers.ps1\n\nTechnical requirements:\n- Use Microsoft Graph PowerShell.\n- Import users from a CSV file.\n- Validate that required CSV columns exist.\n- Validate required row values.\n- Validate basic UserPrincipalName format.\n- Validate UsageLocation as a two-letter country code.\n- Validate AccountEnabled as a boolean-like value.\n- Check whether a user already exists before creation.\n- Include a dry-run mode that performs validation and existence checks but does not create users.\n- Include try/catch error handling.\n- Include timestamped logging.\n- Do not log temporary passwords.\n- Do not include hardcoded secrets.\n- Do not include real tenant IDs, real domains, real users, or customer data.\n- Use placeholder/example values only in comments.\n- Include clear comments for maintainability.\n- Include a final summary of created, skipped, failed, and dry-run results.\n\nThe script should use parameters similar to:\n- CsvPath\n- LogPath\n- DryRun\n\nImportant safety constraints:\n- The script must not execute automatically in n8n.\n- The script must include comments stating that it must be reviewed and tested in a non-production environment before use.\n- The script must not contain real credentials or secrets.\n\nReturn only the PowerShell script in a single Markdown code block.\nDo not include explanations outside the code block."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        720,
+        0
+      ],
+      "id": "06b2040c-964a-480e-9d8f-07334d4d46c9",
+      "name": "AI - Create Powershell Script",
+      "credentials": {
+        "openAiApi": {
+          "id": "1Rn4CZwScByDJVsl",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are acting as a senior Azure engineer, Microsoft Entra ID administrator, and security reviewer.\n\nYou are reviewing an AI-generated PowerShell script that was created as part of a university project about AI-assisted engineering workflows for Azure consultants.\n\nThe project scenario:\nAn n8n-based workflow supports an Azure consultant by generating, reviewing, and documenting a PowerShell script for Microsoft Entra ID user onboarding from CSV files. The workflow must not execute administrative changes automatically. The generated script must be reviewed and tested by a human engineer before any real use.\n\nReview the following PowerShell script:\n\n{{ $json.output[0].content[0].text }}\n\nCreate a structured risk and quality review in Markdown.\n\nUse the following structure:\n\n# AI Script Review\n\n## 1. Overall Assessment\nBriefly assess whether the script is a useful first draft and whether it is safe for direct production use.\n\n## 2. Positive Findings\nList what the script already does well.\n\n## 3. Critical Findings\nList high-risk findings that must be fixed before real use.\n\nFor each finding, include:\n- Finding\n- Severity: High / Medium / Low\n- Explanation\n- Recommendation\n\n## 4. Security Review\nReview secrets handling, permissions, Microsoft Graph scopes, privacy, logging, and customer data protection.\n\n## 5. Reliability Review\nReview error handling, validation, dry-run behavior, idempotency, logging, and continuation behavior.\n\n## 6. PowerShell and Microsoft Graph Review\nReview whether the script uses realistic PowerShell and Microsoft Graph patterns.\n\n## 7. Dry-Run Review\nSpecifically check whether dry-run behavior is implemented correctly and whether it matches the requirement that dry-run should perform validation and existence checks without creating users.\n\n## 8. Production Readiness\nExplain whether the script is production-ready, partially ready, or only a prototype.\n\n## 9. Recommended Improvements\nProvide a prioritized list of concrete improvements.\n\n## 10. Human Approval Checklist\nCreate a checklist for the Azure engineer before testing or execution.\n\nImportant constraints:\n- Do not rewrite the full script.\n- Do not execute anything.\n- Do not assume the script is safe just because it was AI-generated.\n- Be critical but constructive.\n- Focus on security, reliability, validation, permissions, privacy, and production-readiness."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        848,
+        192
+      ],
+      "id": "26552f04-d8c5-46b7-b431-538b8b15bdb2",
+      "name": "AI - Script Review",
+      "credentials": {
+        "openAiApi": {
+          "id": "1Rn4CZwScByDJVsl",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are supporting an Azure engineer and IT consultant in a university project about AI-assisted engineering workflows.\n\nThe project scenario:\nAn n8n-based workflow supports an Azure consultant by generating, reviewing, improving, and documenting a PowerShell script for Microsoft Entra ID user onboarding from CSV files.\n\nThe workflow must not execute administrative changes automatically. The generated script must be reviewed and tested by a human Azure engineer before any real use.\n\nYou receive two inputs:\n1. The first AI-generated PowerShell script draft.\n2. The AI-generated script risk and quality review.\n\nYour task:\nCreate an improved second version of the PowerShell script based on the review findings.\n\nUse the following original PowerShell script:\n\n{{ $('AI - Create Powershell Script').item.json.output[0].content[0].text }}\n\nUse the following AI script review:\n\n{{ $('AI - Script Review').item.json.output[0].content[0].text }}\n\nImprove the script by addressing the high-priority and medium-priority findings where realistic for a safe prototype.\n\nThe improved script must:\n- Use Microsoft Graph PowerShell.\n- Import users from a CSV file.\n- Validate that required CSV columns exist.\n- Validate required row values.\n- Validate basic UserPrincipalName format.\n- Validate UsageLocation as a two-letter country code.\n- Validate AccountEnabled as a boolean-like value.\n- Check for duplicate UserPrincipalName values in the CSV before Graph operations.\n- Check whether users already exist in Microsoft Entra ID before creation.\n- In dry-run mode, still connect to Microsoft Graph and perform existence checks, but never create users.\n- Avoid logging TemporaryPassword values.\n- Avoid logging full raw exception objects.\n- Use sanitized exception logging.\n- Include try/catch error handling.\n- Include timestamped logging.\n- Use explicit log encoding where possible.\n- Include final summary output.\n- Add Disconnect-MgGraph cleanup where appropriate.\n- Include clear comments for maintainability.\n- Include a reminder that the script must be reviewed and tested in a non-production environment.\n- Avoid hardcoded secrets, tenant IDs, real domains, customer names, or real personal data.\n- Keep the script understandable for Azure engineers and IT consultants.\n\nImportant limitations:\n- Do not implement autonomous execution from n8n.\n- Do not include real customer data.\n- Do not include real credentials or secrets.\n- Do not claim the script is production-ready.\n- Do not add unnecessary complexity beyond what is useful for a realistic prototype.\n\nReturn only the improved PowerShell script.\nPut the script in one Markdown code block using powershell syntax.\nDo not include explanations outside the code block."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        1152,
+        192
+      ],
+      "id": "31276756-52a1-4a43-857e-190a17642c4c",
+      "name": "AI - Script Improvement",
+      "credentials": {
+        "openAiApi": {
+          "id": "1Rn4CZwScByDJVsl",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are supporting an Azure engineer and IT consultant in a university project about AI-assisted engineering workflows.\n\nThe project scenario:\nAn n8n-based workflow supports an Azure consultant by generating, reviewing, improving, and documenting a PowerShell script for Microsoft Entra ID user onboarding from CSV files.\n\nThe workflow must not execute administrative changes automatically. It only generates engineering artifacts. The generated script must be reviewed and tested by a human Azure engineer before any real use.\n\nYou receive:\n1. The improved PowerShell script.\n2. The AI-generated risk review.\n\nUse the following improved PowerShell script as the main technical artifact:\n\n{{ $('AI - Script Improvement').item.json.output[0].content[0].text }}\n\nUse the following AI script review as additional context:\n\n{{ $('AI - Script Review').item.json.output[0].content[0].text }}\n\nCreate technical documentation for the improved script.\n\nReturn the result as a Markdown README.md file.\n\nUse this structure:\n\n# README - AI-Assisted Microsoft Entra ID User Onboarding Script\n\n## 1. Purpose\nExplain what the script is intended to do.\n\n## 2. Project Context\nExplain that this script was generated as part of an AI-assisted n8n workflow for a university project and that AI supports, but does not replace, the Azure engineer.\n\n## 3. Important Safety Notice\nState clearly:\n- The script is a prototype.\n- It must be reviewed by a human Azure engineer.\n- It must be tested in a non-production environment first.\n- It must not be executed automatically by n8n.\n- It must not be used with real customer data in AI prompts.\n\n## 4. Workflow Overview\nDescribe the n8n workflow:\n- Consultant input\n- Requirement specification\n- Initial script generation\n- AI script review\n- Script improvement\n- Documentation generation\n- Human validation\n\n## 5. Prerequisites\nInclude:\n- PowerShell\n- Microsoft Graph PowerShell modules\n- Microsoft Entra ID permissions\n- Existing Microsoft Graph authentication context if required by the script\n- Non-production tenant for testing\n\n## 6. Required Microsoft Graph Permissions\nExplain the likely required permissions and state that exact permissions must be validated by the Azure engineer according to the tenant and authentication model.\n\n## 7. CSV Input Format\nDocument required and optional CSV columns.\n\nInclude a CSV header example.\n\n## 8. How to Run the Script\nProvide example commands for:\n- Dry-run execution\n- Real execution after approval\n\nUse placeholder paths only.\n\n## 9. Dry-Run Behavior\nExplain what dry-run does and why it is required before real execution.\n\n## 10. Logging\nExplain what the script logs, where logs are written, and why logs must be protected.\n\n## 11. Security and Privacy Considerations\nDiscuss:\n- No hardcoded secrets\n- Temporary password handling\n- PII in CSV and logs\n- Avoiding real customer data in prompts\n- Least privilege\n- Human approval\n\n## 12. Known Limitations\nInclude realistic limitations from the review:\n- Prototype status\n- Existing Graph context requirement\n- Need for tenant-specific permission validation\n- Need for password policy validation\n- Need for non-production testing\n\n## 13. Testing Guidance\nDescribe recommended tests:\n- Valid CSV\n- Missing required column\n- Invalid UPN\n- Duplicate UPN\n- Existing user\n- Dry-run mode\n- Non-dry-run in test tenant only\n\n## 14. Human Approval Checklist\nCreate a concise checklist before execution.\n\n## 15. Conclusion\nSummarize how this artifact demonstrates AI-assisted engineering while keeping the human engineer responsible.\n\nImportant:\n- Return only the README.md content.\n- Do not include explanations outside the Markdown document.\n- Do not claim the script is production-ready.\n- Do not include real tenant IDs, customer names, credentials, or personal data."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        -80,
+        432
+      ],
+      "id": "14e96062-3678-4b86-8616-0826a256b6ff",
+      "name": "AI - Documentation Generation",
+      "credentials": {
+        "openAiApi": {
+          "id": "1Rn4CZwScByDJVsl",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are supporting an Azure engineer and IT consultant in a university project about AI-assisted engineering workflows.\n\nThe project scenario:\nAn n8n-based workflow supports an Azure consultant by generating, reviewing, improving, and documenting a PowerShell script for Microsoft Entra ID user onboarding from CSV files.\n\nThe workflow must not execute administrative changes automatically. It only generates engineering artifacts. The generated artifacts must be reviewed and tested by a human Azure engineer before any real use.\n\nYou receive:\n1. The improved PowerShell script.\n2. The generated README documentation.\n\nUse the following improved PowerShell script as technical context:\n\n{{ $('AI - Script Improvement').item.json.output[0].content[0].text }}\n\nUse the following README documentation as additional context:\n\n{{ $('AI - Documentation Generation').item.json.output[0].content[0].text }}\n\nYour task:\nGenerate a CSV template for the script.\n\nThe CSV template must:\n- Include all required columns from the script.\n- Include all optional columns from the script.\n- Use placeholder/example data only.\n- Use no real names, no real users, no real domains, no customer data, no tenant IDs, and no secrets.\n- Use placeholder domains such as contoso.example.\n- Include at least three example rows.\n- Include one enabled user and one disabled user.\n- Use clearly fake temporary passwords.\n- Keep the output valid CSV.\n- Do not include explanations, Markdown, code fences, or comments.\n- Return only the CSV content.\n\nRequired output file name:\nusers-template.csv"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        432
+      ],
+      "id": "1d020aed-6124-4303-afaa-fc44cfb9ddab",
+      "name": "AI - CSV Template Generation",
+      "credentials": {
+        "openAiApi": {
+          "id": "1Rn4CZwScByDJVsl",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are supporting an Azure engineer and IT consultant in a university project about AI-assisted engineering workflows.\n\nThe project scenario:\nAn n8n-based workflow supports an Azure consultant by generating, reviewing, improving, and documenting a PowerShell script for Microsoft Entra ID user onboarding from CSV files.\n\nThe workflow must not execute administrative changes automatically. It only generates engineering artifacts. The generated script and all artifacts must be reviewed and tested by a human Azure engineer before any real use.\n\nYou receive:\n1. The improved PowerShell script.\n2. The README documentation.\n3. The CSV template.\n\nUse the following improved PowerShell script as technical context:\n\n{{ $('AI - Script Improvement').item.json.output[0].content[0].text }}\n\nUse the following README documentation as additional context:\n\n{{ $('AI - Documentation Generation').item.json.output[0].content[0].text }}\n\nUse the following CSV template as input context:\n\n{{ $('AI - CSV Template Generation').item.json.output[0].content[0].text }}\n\nYour task:\nCreate a technical test checklist for validating the improved PowerShell script and the AI-assisted workflow.\n\nReturn the result as Markdown suitable for a file named:\n\ntest-checklist.md\n\nUse this structure:\n\n# Test Checklist - AI-Assisted Entra ID User Onboarding Script\n\n## 1. Purpose\nExplain the purpose of the checklist.\n\n## 2. Test Environment Requirements\nInclude non-production tenant, test accounts, approved permissions, Microsoft Graph PowerShell, and secure test CSV handling.\n\n## 3. Pre-Test Validation\nChecklist items for reviewing the script, README, CSV template, permissions, and safety constraints.\n\n## 4. CSV Validation Test Cases\nInclude test cases for:\n- valid CSV\n- missing required column\n- empty required value\n- invalid UserPrincipalName\n- invalid UsageLocation\n- invalid AccountEnabled value\n- duplicate UserPrincipalName\n- unknown extra column\n\n## 5. Dry-Run Test Cases\nInclude test cases for:\n- dry-run with valid users\n- dry-run with existing user\n- dry-run with invalid rows\n- confirmation that no users are created\n\n## 6. Microsoft Graph and Permission Tests\nInclude tests for:\n- missing Graph connection\n- insufficient permissions\n- successful Graph lookup\n- user already exists\n- Graph lookup failure handling\n\n## 7. Non-Dry-Run Test Cases\nInclude tests for real execution in non-production only:\n- successful test user creation\n- partial failure handling\n- summary output\n- log review\n\n## 8. Logging and Privacy Checks\nInclude checks that logs do not contain TemporaryPassword values and that logs are access-controlled.\n\n## 9. Human Approval Checklist\nInclude a checklist that must be completed before any non-dry-run execution.\n\n## 10. Expected Results\nSummarize what successful testing should prove.\n\n## 11. Remaining Limitations\nList realistic limitations that still require human judgment.\n\nImportant:\n- Return only the Markdown content.\n- Do not include explanations outside the Markdown document.\n- Do not claim the script is production-ready.\n- Do not include real tenant IDs, customer names, credentials, or personal data."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        320,
+        624
+      ],
+      "id": "099e09f8-1d17-41af-81b5-40fa718ee870",
+      "name": "AI - Test Checklist Generation",
+      "credentials": {
+        "openAiApi": {
+          "id": "1Rn4CZwScByDJVsl",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5.4-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are supporting an Azure engineer and IT consultant in a university project about AI-assisted engineering workflows.\n\nThe project scenario:\nAn n8n-based workflow supports an Azure consultant by generating, reviewing, improving, and documenting a PowerShell script for Microsoft Entra ID user onboarding from CSV files.\n\nThe workflow must not execute administrative changes automatically. It only generates engineering artifacts. Human validation remains mandatory before any real execution.\n\nThe purpose of this node is to create a prompt library summary for the project repository and later university report.\n\nUse the following workflow outputs as context.\n\nRequirement specification:\n\n{{ $('AI - Requirement Structuring').item.json.output[0].content[0].text }}\n\nInitial PowerShell script:\n\n{{ $('AI - Create Powershell Script').item.json.output[0].content[0].text }}\n\nAI script review:\n\n{{ $('AI - Script Review').item.json.output[0].content[0].text }}\n\nImproved PowerShell script:\n\n{{ $('AI - Script Improvement').item.json.output[0].content[0].text }}\n\nREADME documentation:\n\n{{ $('AI - Documentation Generation').item.json.output[0].content[0].text }}\n\nCSV template:\n\n{{ $('AI - CSV Template Generation').item.json.output[0].content[0].text }}\n\nTest checklist:\n\n{{ $('AI - Test Checklist Generation').item.json.output[0].content[0].text }}\n\nYour task:\nCreate a Markdown document named prompt-library.md that summarizes the prompts used in this AI-assisted workflow.\n\nUse this structure:\n\n# Prompt Library - AI-Assisted Entra ID User Onboarding Workflow\n\n## 1. Purpose of the Prompt Library\nExplain why prompts were documented and how they support transparency, repeatability, and project evaluation.\n\n## 2. Workflow Overview\nBriefly describe the prompt chain:\n- consultant input\n- requirement structuring\n- script generation\n- script review\n- script improvement\n- documentation generation\n- CSV template generation\n- test checklist generation\n- prompt library summary\n\n## 3. Prompt Design Principles\nExplain the principles used:\n- task-specific prompting\n- role-based prompting\n- structured output formats\n- safety constraints\n- human approval\n- iterative refinement\n- separation of generation and review\n- no real customer data\n\n## 4. Prompt 1 - Requirement Structuring\nInclude:\n- Purpose\n- Input used\n- Expected output\n- Why this prompt was useful\n\n## 5. Prompt 2 - PowerShell Script Generation\nInclude:\n- Purpose\n- Input used\n- Expected output\n- Main constraints\n- Why this prompt was useful\n\n## 6. Prompt 3 - AI Script Review\nInclude:\n- Purpose\n- Input used\n- Expected output\n- Main review criteria\n- Why this prompt was useful\n\n## 7. Prompt 4 - Script Improvement\nInclude:\n- Purpose\n- Input used\n- Expected output\n- How review findings were used\n- Why this prompt was useful\n\n## 8. Prompt 5 - Documentation Generation\nInclude:\n- Purpose\n- Input used\n- Expected output\n- Why this prompt was useful\n\n## 9. Prompt 6 - CSV Template Generation\nInclude:\n- Purpose\n- Input used\n- Expected output\n- Safety considerations\n- Why this prompt was useful\n\n## 10. Prompt 7 - Test Checklist Generation\nInclude:\n- Purpose\n- Input used\n- Expected output\n- Why this prompt was useful\n\n## 11. Prompt 8 - Prompt Library Summary\nInclude:\n- Purpose\n- Input used\n- Expected output\n- Why this prompt was useful\n\n## 12. Iterative Prompt Development\nExplain how the workflow demonstrates iterative improvement:\ninitial generation -> review -> improvement -> documentation -> testing.\n\n## 13. Safety and Ethical Considerations in Prompting\nDiscuss:\n- AI does not execute changes\n- human review remains required\n- no real customer data in prompts\n- risk of hallucinated or insecure code\n- importance of validation\n- privacy and least privilege\n\n## 14. Lessons Learned\nSummarize what the prompt chain shows about using generative AI for Azure engineering tasks.\n\n## 15. Possible Improvements\nList possible future improvements:\n- adding stricter output schemas\n- adding automated artifact storage\n- adding human approval nodes\n- adding second independent review\n- adding test execution in a lab only\n- adding prompt versioning\n\nImportant:\n- Return only the Markdown content.\n- Do not include explanations outside the Markdown document.\n- Do not include real customer data, credentials, tenant IDs, or personal data.\n- Do not claim the AI output is production-ready."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        624
+      ],
+      "id": "c35806ed-dd5d-4028-b8aa-0356660afacf",
+      "name": "AI - Prompt Library Summary",
+      "credentials": {
+        "openAiApi": {
+          "id": "1Rn4CZwScByDJVsl",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * n8n Code Node: Prepare Artifact Upload Package\n *\n * Purpose:\n * This node collects the generated text outputs from the previous AI nodes,\n * cleans them where necessary, creates a run-specific blob folder name,\n * and prepares one binary item per artifact for upload to Azure Blob Storage.\n *\n * Result:\n * Each returned item represents one file:\n * - json.blobPath = target path in Azure Blob Storage\n * - json.fileName = file name\n * - binary.data  = file content as binary data\n */\n\n/**\n * Reads the text output from a previous n8n AI node.\n *\n * The OpenAI \"Message a model\" nodes return generated text here:\n * output[0].content[0].text\n *\n * If a node name is wrong or the output is empty, this returns an empty string.\n */\nfunction getTextFromAiNode(nodeName) {\n  const nodeJson = $(nodeName).first().json;\n\n  return nodeJson.output?.[0]?.content?.[0]?.text ?? '';\n}\n\n/**\n * Removes Markdown code fences from generated artifacts.\n *\n * Example:\n * ```powershell\n * Write-Host \"Hello\"\n * ```\n *\n * becomes:\n * Write-Host \"Hello\"\n *\n * This is important because .ps1 and .csv files must not contain Markdown fences.\n */\nfunction stripMarkdownCodeFence(text) {\n  if (!text) {\n    return '';\n  }\n\n  return text\n    .replace(/^```powershell\\s*/i, '')\n    .replace(/^```ps1\\s*/i, '')\n    .replace(/^```markdown\\s*/i, '')\n    .replace(/^```csv\\s*/i, '')\n    .replace(/```$/i, '')\n    .trim();\n}\n\n/**\n * Converts a string into a safe folder-name part.\n *\n * Example:\n * \"Entra ID User Onboarding!\" becomes \"entra-id-user-onboarding\"\n */\nfunction slugify(value) {\n  return String(value || '')\n    .toLowerCase()\n    .trim()\n    .replace(/[^a-z0-9]+/g, '-')\n    .replace(/^-+|-+$/g, '')\n    .substring(0, 80);\n}\n\n/**\n * Returns today's date in ISO format: YYYY-MM-DD\n */\nfunction getTodayAsIsoDate() {\n  return new Date().toISOString().slice(0, 10);\n}\n\n/**\n * Very simple CSV parser for our generated CSV template.\n *\n * This is enough for our current generated template because it does not contain\n * commas inside quoted values.\n *\n * For production CSV parsing, use a proper CSV parser instead.\n */\nfunction getFirstNameFromCsv(csvText) {\n  if (!csvText || typeof csvText !== 'string') {\n    return 'unknown';\n  }\n\n  const lines = csvText.trim().split(/\\r?\\n/).filter(Boolean);\n\n  // We need at least a header row and one data row.\n  if (lines.length < 2) {\n    return 'unknown';\n  }\n\n  const headers = lines[0].split(',').map(header => header.trim());\n  const firstRow = lines[1].split(',').map(value => value.trim());\n\n  // Prefer the GivenName column if it exists.\n  const givenNameIndex = headers.findIndex(header => header.toLowerCase() === 'givenname');\n\n  if (givenNameIndex >= 0 && firstRow[givenNameIndex]) {\n    return firstRow[givenNameIndex];\n  }\n\n  // Fallback: use the first word from DisplayName.\n  const displayNameIndex = headers.findIndex(header => header.toLowerCase() === 'displayname');\n\n  if (displayNameIndex >= 0 && firstRow[displayNameIndex]) {\n    return firstRow[displayNameIndex].split(/\\s+/)[0];\n  }\n\n  return 'unknown';\n}\n\n/**\n * Creates n8n binary data from text content.\n *\n * Azure Blob upload nodes normally expect binary data.\n * We convert the text content into base64 and attach file metadata.\n */\nfunction createBinaryData(content, fileName, mimeType) {\n  return {\n    data: Buffer.from(content, 'utf8').toString('base64'),\n    fileName: fileName,\n    mimeType: mimeType,\n  };\n}\n\n/**\n * Read all generated outputs from the existing workflow nodes.\n *\n * IMPORTANT:\n * The node names below must match your n8n node names exactly.\n * If one node has a different name, adjust it here.\n */\nconst requirementSpecification = getTextFromAiNode('AI - Requirement Structuring').trim();\n\nconst initialPowerShellScript = stripMarkdownCodeFence(\n  getTextFromAiNode('AI - Create Powershell Script')\n);\n\nconst riskReview = getTextFromAiNode('AI - Script Review').trim();\n\nconst improvedPowerShellScript = stripMarkdownCodeFence(\n  getTextFromAiNode('AI - Script Improvement')\n);\n\nconst readme = getTextFromAiNode('AI - Documentation Generation').trim();\n\nconst csvTemplate = stripMarkdownCodeFence(\n  getTextFromAiNode('AI - CSV Template Generation')\n);\n\nconst testChecklist = getTextFromAiNode('AI - Test Checklist Generation').trim();\n\nconst promptLibrary = getTextFromAiNode('AI - Prompt Library Summary').trim();\n\n/**\n * Build the run folder name.\n *\n * Desired pattern:\n * date_purpose_firstname\n *\n * Example:\n * 2026-06-03_entra-user-onboarding_test\n */\nconst datePart = getTodayAsIsoDate();\nconst purposePart = slugify('entra-user-onboarding');\nconst firstNamePart = slugify(getFirstNameFromCsv(csvTemplate));\n\nconst runFolder = `${datePart}_${purposePart}_${firstNamePart}`;\n\n/**\n * Create a final run summary.\n *\n * This file helps technicians understand what was generated\n * and how they should use the artifact package.\n */\nconst runSummary = `# Run Summary - AI-Assisted Entra ID User Onboarding Workflow\n\n## Run Folder\n\n\\`${runFolder}\\`\n\n## Generated Artifacts\n\n- requirement-specification.md\n- Create-EntraUsers.ps1\n- risk-review.md\n- Create-EntraUsers-v2.ps1\n- README.md\n- users-template.csv\n- test-checklist.md\n- prompt-library.md\n- run-summary.md\n\n## Workflow Purpose\n\nThis artifact package was generated by an n8n-based AI-assisted workflow.\n\nThe workflow supports Azure consultants by generating, reviewing, improving, and documenting PowerShell artifacts for Microsoft Entra ID user onboarding from CSV files.\n\n## Safety Statement\n\nThe generated files are engineering artifacts for human review.\n\nn8n does not execute PowerShell.\nn8n does not create users in Microsoft Entra ID.\nA human Azure engineer must review and test the artifacts in a non-production environment before any real use.\n\n## Recommended Technician Usage\n\n1. Open README.md.\n2. Review risk-review.md.\n3. Inspect Create-EntraUsers-v2.ps1.\n4. Use users-template.csv as the input structure.\n5. Follow test-checklist.md in a non-production environment.\n6. Execute manually only after human approval.\n\n## Run Metadata\n\n- Date: ${datePart}\n- Purpose: Entra ID user onboarding\n- First CSV example first name: ${firstNamePart}\n`;\n\n/**\n * Define all artifacts we want to upload.\n *\n * Each object becomes one file in Azure Blob Storage.\n */\nconst artifacts = [\n  {\n    fileName: 'requirement-specification.md',\n    content: requirementSpecification,\n    mimeType: 'text/markdown',\n  },\n  {\n    fileName: 'Create-EntraUsers.ps1',\n    content: initialPowerShellScript,\n    mimeType: 'text/plain',\n  },\n  {\n    fileName: 'risk-review.md',\n    content: riskReview,\n    mimeType: 'text/markdown',\n  },\n  {\n    fileName: 'Create-EntraUsers-v2.ps1',\n    content: improvedPowerShellScript,\n    mimeType: 'text/plain',\n  },\n  {\n    fileName: 'README.md',\n    content: readme,\n    mimeType: 'text/markdown',\n  },\n  {\n    fileName: 'users-template.csv',\n    content: csvTemplate,\n    mimeType: 'text/csv',\n  },\n  {\n    fileName: 'test-checklist.md',\n    content: testChecklist,\n    mimeType: 'text/markdown',\n  },\n  {\n    fileName: 'prompt-library.md',\n    content: promptLibrary,\n    mimeType: 'text/markdown',\n  },\n  {\n    fileName: 'run-summary.md',\n    content: runSummary,\n    mimeType: 'text/markdown',\n  },\n];\n\n/**\n * Return one n8n item per artifact.\n *\n * The Azure Blob Storage node will process each item and upload it as one blob.\n */\nreturn artifacts.map(artifact => {\n  const blobPath = `${runFolder}/${artifact.fileName}`;\n\n  return {\n    json: {\n      runFolder: runFolder,\n      fileName: artifact.fileName,\n      blobPath: blobPath,\n      mimeType: artifact.mimeType,\n    },\n    binary: {\n      data: createBinaryData(\n        artifact.content,\n        artifact.fileName,\n        artifact.mimeType\n      ),\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        624
+      ],
+      "id": "14ec4d43-3c79-4fc7-9075-7450d95b2f45",
+      "name": "Prepare Artifact Upload Package"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "blob",
+        "operation": "create",
+        "container": {
+          "__rl": true,
+          "value": "ai-generated-artifacts",
+          "mode": "id"
+        },
+        "blobCreate": "={{ $json.blobPath }}",
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.azureStorage",
+      "typeVersion": 1,
+      "position": [
+        1232,
+        624
+      ],
+      "id": "b285478b-2ac7-40c9-8722-ef3b98e7d9c7",
+      "name": "Create blob",
+      "credentials": {
+        "azureStorageOAuth2Api": {
+          "id": "bpDqdSOD99HJrfuj",
+          "name": "Azure Storage account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * n8n Code Node: Final Upload Summary\n *\n * Purpose:\n * Creates one final summary item after all artifacts were uploaded.\n * This avoids repeating the same summary once per uploaded file.\n */\n\n// Read all prepared artifact items from the packaging node.\n// This node originally created one item per artifact.\nconst preparedArtifacts = $('Prepare Artifact Upload Package').all();\n\n// Read the first artifact to get the run folder.\n// All artifacts from one run use the same folder.\nconst firstArtifact = preparedArtifacts[0]?.json ?? {};\n\n// Count how many artifacts were prepared/uploaded.\nconst uploadedArtifactCount = preparedArtifacts.length;\n\n// Return exactly one summary item.\nreturn [\n  {\n    json: {\n      status: 'Artifact upload completed',\n      storageAccount: 'n8ncreativeprompting',\n      container: 'ai-generated-artifacts',\n      runFolder: firstArtifact.runFolder,\n      uploadedArtifactCount: uploadedArtifactCount,\n      technicianInstructions:\n        'Open the generated run folder in Azure Blob Storage. Start with README.md, then review risk-review.md, inspect Create-EntraUsers-v2.ps1, use users-template.csv, and follow test-checklist.md. Do not execute anything without human review and non-production testing.',\n    },\n  },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        624
+      ],
+      "id": "4c853167-feef-42f7-93ad-2262e089f71b",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"project\": {\n    \"name\": \"AI-Assisted Entra ID User Onboarding Script Workflow\",\n    \"course\": \"DLMPAIECPT01 – Project: AI Excellence with Creative Prompting Techniques\",\n    \"task_type\": \"Task 3\",\n    \"implementation_platform\": \"n8n self-hosted on Ubuntu Server in Azure\",\n    \"project_goal\": \"Support Azure consultants in creating, reviewing, documenting, and testing PowerShell scripts for Microsoft Entra ID user onboarding from CSV files.\"\n  },\n  \"consultant_request\": {\n    \"role_context\": \"Azure engineer and IT consultant\",\n    \"target_system\": \"Microsoft Entra ID\",\n    \"task_description\": \"Prepare a PowerShell script that reads user data from a CSV file and creates Microsoft Entra ID users using Microsoft Graph PowerShell.\",\n    \"business_context\": \"The workflow supports recurring user onboarding tasks in everyday IT consulting scenarios. The generated output must be reviewed and tested by a human engineer before use.\"\n  },\n  \"script_requirements\": {\n    \"language\": \"PowerShell\",\n    \"preferred_module\": \"Microsoft.Graph PowerShell\",\n    \"input_source\": \"CSV file\",\n    \"main_functionality\": [\n      \"Import users from CSV\",\n      \"Validate required CSV columns\",\n      \"Validate required values per row\",\n      \"Check whether a user already exists before creation\",\n      \"Create users only when validation passes\",\n      \"Support dry-run mode\",\n      \"Write log output\",\n      \"Use try/catch error handling\",\n      \"Return clear success and error messages\"\n    ],\n    \"required_csv_columns\": [\n      \"DisplayName\",\n      \"UserPrincipalName\",\n      \"MailNickname\",\n      \"AccountEnabled\",\n      \"UsageLocation\",\n      \"TemporaryPassword\"\n    ],\n    \"optional_csv_columns\": [\n      \"GivenName\",\n      \"Surname\",\n      \"Department\",\n      \"JobTitle\",\n      \"MobilePhone\",\n      \"OfficeLocation\"\n    ]\n  },\n  \"security_requirements\": {\n    \"must_include\": [\n      \"No hardcoded secrets\",\n      \"No tenant-specific real identifiers\",\n      \"No customer names\",\n      \"No real personal data\",\n      \"Clear required permissions\",\n      \"Human review before execution\",\n      \"Test in non-production environment first\",\n      \"Dry-run mode before real execution\"\n    ],\n    \"permission_guidance\": [\n      \"Use least privilege where possible\",\n      \"Document required Microsoft Graph permissions\",\n      \"Avoid excessive administrative permissions unless justified\"\n    ],\n    \"privacy_guidance\": [\n      \"Use placeholder data only\",\n      \"Do not include real user data in prompts or generated artifacts\",\n      \"Do not upload customer CSV files to the AI model\"\n    ]\n  },\n  \"output_artifacts\": {\n    \"powershell_script\": \"Create-EntraUsers.ps1\",\n    \"csv_template\": \"users-template.csv\",\n    \"technical_documentation\": \"README.md\",\n    \"risk_review\": \"risk-review.md\",\n    \"test_checklist\": \"test-checklist.md\",\n    \"prompt_library\": \"prompt-library.md\"\n  },\n  \"workflow_constraints\": {\n    \"n8n_may_generate_artifacts\": true,\n    \"n8n_may_execute_powershell\": false,\n    \"n8n_may_create_users_in_entra_id\": false,\n    \"human_approval_required\": true,\n    \"production_execution_allowed\": false,\n    \"non_production_testing_required\": true\n  },\n  \"evaluation_criteria\": {\n    \"script_completeness\": \"The generated script should cover CSV import, validation, user existence checks, creation logic, dry-run mode, logging, and error handling.\",\n    \"security_quality\": \"The generated output should avoid secrets, real data, excessive permissions, and unsafe automation.\",\n    \"documentation_quality\": \"The documentation should be understandable for Azure engineers and IT consultants.\",\n    \"practical_value\": \"The workflow should reduce repetitive preparation effort while keeping human control.\",\n    \"responsible_ai_use\": \"The AI should support decision-making and artifact preparation but not replace professional review.\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "7feaa841-9ec5-4b0e-95c7-791ec4462991",
+      "name": "Set Consultant Input"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Set Consultant Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI - Requirement Structuring": {
+      "main": [
+        [
+          {
+            "node": "AI - Create Powershell Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI - Create Powershell Script": {
+      "main": [
+        [
+          {
+            "node": "AI - Script Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI - Script Review": {
+      "main": [
+        [
+          {
+            "node": "AI - Script Improvement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI - Script Improvement": {
+      "main": [
+        [
+          {
+            "node": "AI - Documentation Generation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI - Documentation Generation": {
+      "main": [
+        [
+          {
+            "node": "AI - CSV Template Generation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI - CSV Template Generation": {
+      "main": [
+        [
+          {
+            "node": "AI - Test Checklist Generation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI - Test Checklist Generation": {
+      "main": [
+        [
+          {
+            "node": "AI - Prompt Library Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI - Prompt Library Summary": {
+      "main": [
+        [
+          {
+            "node": "Prepare Artifact Upload Package",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Artifact Upload Package": {
+      "main": [
+        [
+          {
+            "node": "Create blob",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create blob": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Consultant Input": {
+      "main": [
+        [
+          {
+            "node": "AI - Requirement Structuring",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "80679836-d46e-4fae-9036-f819f175e4f7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3d6be06185252cb28127c93ae2e7ecd9802636c3239981768a221075a7199dff"
+  },
+  "id": "XsC0qCGVCVYG6aj7",
+  "tags": [
+    {
+      "updatedAt": "2026-05-03T13:36:02.981Z",
+      "createdAt": "2026-05-03T13:36:02.981Z",
+      "id": "T6h4Vu3UcZgVupbr",
+      "name": "DoNotDelete"
+    },
+    {
+      "updatedAt": "2026-06-03T09:09:59.757Z",
+      "createdAt": "2026-06-03T09:09:59.757Z",
+      "id": "fngwvOhEETqCGVyE",
+      "name": "IU"
+    }
+  ]
+}
